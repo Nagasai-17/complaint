@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aditya Degree College | Complaint & Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      color: #f1f5f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+    .landing-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: #0f172a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      z-index: 9999;
+      animation: fadeOut 1s ease 2.5s forwards;
+    }
+    .landing-screen img {
+      width: 100px;
+      animation: rotate 2s linear infinite;
+      margin-bottom: 1rem;
+    }
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+    .login-screen, .main-ui, .form-container, .admin-login {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      padding: 20px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(147, 51, 234, 0.4);
+    }
+    .login-screen input, .admin-login input {
+      padding: 12px 15px;
+      width: 260px;
+      border: 2px solid #9333ea;
+      border-radius: 10px;
+      background: transparent;
+      color: white;
+      outline: none;
+    }
+    .login-screen button,
+    .complaint-btn,
+    .admin-btn,
+    .admin-login button {
+      padding: 12px 24px;
+      background: linear-gradient(90deg, #3b82f6, #9333ea);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .admin-btn {
+      background: #ffffff;
+      color: #1e3a8a;
+      border: 1px solid #ccc;
+    }
+    .form-container {
+      width: 60%;
+      max-height: 90vh;
+      overflow-y: auto;
+      margin: 40px auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      color: #333;
+    }
+    .form-container h2, .admin-login h2 {
+      text-align: center;
+      color: #6d28d9;
+      margin-bottom: 10px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: #444;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #7c3aed;
+      box-shadow: 0 0 5px #c084fc;
+    }
+    .btn.raise {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      background: linear-gradient(to right, #8b5cf6, #ec4899);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .logo {
+      width: 100px;
+      margin: 0 auto 20px;
+      display: block;
+    }
+    .admin-login {
+      width: 340px;
+      padding: 30px;
+      margin-top: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+    }
+    .error { color: #f87171; margin-top: 10px; }
+    .success { color: #4ade80; margin-top: 10px; }
+
+    /* Responsive Media Queries */
+    @media (max-width: 1024px) {
+      .form-container {
+        width: 80%;
+        height: auto;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .form-container {
+        width: 90%;
+        padding: 20px;
+      }
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        font-size: 16px;
+      }
+      .btn.raise {
+        font-size: 15px;
+      }
+      .admin-login {
+        width: 90%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-container {
+        width: 95%;
+        padding: 15px;
+      }
+      .form-container h2,
+      .admin-login h2 {
+        font-size: 20px;
+      }
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 10px;
+        font-size: 14px;
+      }
+      .btn.raise {
+        padding: 12px;
+        font-size: 14px;
+      }
+      .login-screen input,
+      .admin-login input {
+        width: 100%;
+      }
+      .login-screen button,
+      .admin-login button {
+        width: 100%;
+      }
+      .logo {
+        width: 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="landingScreen" class="landing-screen">
+    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Logo">
+    <h1>Aditya Degree College</h1>
+    <p>Loading...</p>
+  </div>
+  <div class="login-screen" id="loginScreen">
+    <h2>Login</h2>
+    <input type="text" id="studentCode" placeholder="Student Unique Code" required>
+    <button onclick="login()">Continue</button>
+  </div>
+  <div class="main-ui" id="mainUI">
+    <div class="header-icon">🎓</div>
+    <h2 class="welcome-text">Welcome to</h2>
+    <h1 class="college-name">Aditya Degree College</h1>
+    <p class="location">Rajahmundry</p>
+    <p class="description">Help us improve the campus by sharing your concerns below.</p>
+    <p class="note">🔒 Anonymous • Secure • Confidential 🔒</p>
+    <button class="complaint-btn" onclick="showComplaintForm()">📩 Raise a Complaint</button>
+    <button class="admin-btn" onclick="showAdminLogin()">👤 Admin Access</button>
+  </div>
+  <div class="form-container" id="complaintFormContainer">
+    <img class="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpIoMSRI4yqPfgsuJYfVMrEaBBfSP-nEcL_w&s" alt="Aditya Logo" />
+    <h2>📢 Submit a Complaint</h2>
+    <form id="complaintForm">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Email ID</label>
+        <input type="email" id="email" required />
+      </div>
+      <div class="form-group">
+        <label for="course">Course</label>
+        <select id="course" required>
+          <option value="">-- Select Course --</option>
+          <option value="BSc">B.Sc</option>
+          <option value="BCom">B.Com</option>
+          <option value="BA">B.A</option>
+          <option value="BBA">B.B.A</option>
+          <option value="BCA">BCA</option>
+          <option value="BCA DS">BCA DS</option>
+          <option value="AIR">AIR</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="category">Complaint Category</label>
+        <select id="category" required>
+          <option value="">-- Select Category --</option>
+          <option value="infrastructure">Infrastructure Issues</option>
+          <option value="faculty">Faculty Behavior</option>
+          <option value="hostel">Hostel Management</option>
+          <option value="canteen">Canteen Food & Hygiene</option>
+          <option value="cleanliness">Campus Cleanliness</option>
+          <option value="ragging">Ragging / Harassment</option>
+          <option value="exams">Examination Related</option>
+          <option value="library">Library Facility</option>
+          <option value="wifi">Wi-Fi / Internet Issues</option>
+          <option value="lab">Lab Equipment Problems</option>
+          <option value="sports">Sports Facility</option>
+          <option value="security">Security Concerns</option>
+          <option value="transport">Transport Facility</option>
+          <option value="technical">Website / Technical Issues</option>
+          <option value="administration">College Administration</option>
+          <option value="other">Others</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Complaint Description</label>
+        <textarea id="message" rows="6" required></textarea>
+      </div>
+      <button type="submit" class="btn raise">Submit Complaint</button>
+    </form>
+  </div>
+  <div class="admin-login" id="adminLogin">
+    <h2>🔐 Admin Login</h2>
+    <input type="text" id="adminId" placeholder="Admin ID" required />
+    <input type="password" id="adminPassword" placeholder="Password" required />
+    <button onclick="validateAdmin()">Login</button>
+    <div class="error" id="errorMsg"></div>
+    <div class="success" id="successMsg"></div>
+  </div>
+  <script>
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        document.getElementById("landingScreen").style.display = "none";
+        document.getElementById("loginScreen").style.display = "flex";
+      }, 3000);
+    });
+
+    function login() {
+      const code = document.getElementById("studentCode").value.trim();
+      if (code !== "") {
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("mainUI").style.display = "flex";
+      } else {
+        alert("Please enter your Student Unique Code.");
+      }
+    }
+
+    function showComplaintForm() {
+      document.getElementById("mainUI").style.display = "none";
+      document.getElementById("complaintFormContainer").style.display = "block";
+    }
+
+    function showAdminLogin() {
+      document.getElementById("mainUI").style.display = "none";
+      document.getElementById("adminLogin").style.display = "flex";
+    }
+
+    function validateAdmin() {
+      const id = document.getElementById('adminId').value.trim();
+      const password = document.getElementById('adminPassword').value.trim();
+      const errorMsg = document.getElementById('errorMsg');
+      const successMsg = document.getElementById('successMsg');
+      errorMsg.textContent = "";
+      successMsg.textContent = "";
+      if (id === "admin" && password === "admin123") {
+        successMsg.textContent = "✅ Login successful!";
+        setTimeout(() => {
+          alert("Redirecting to Admin Dashboard...");
+        }, 1500);
+      } else {
+        errorMsg.textContent = "❌ Invalid Admin ID or Password";
+      }
+    }
+
+    emailjs.init("NMFCDt__QERprrrhA"); // Replace with your own public key
+    document.getElementById("complaintForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const course = document.getElementById("course").value;
+      const category = document.getElementById("category").value;
+      const message = document.getElementById("message").value.trim();
+
+      if (!name || !email || !course || !category || !message) {
+        alert("❗ Please fill in all fields.");
+        return;
+      }
+
+      emailjs.send("service_ve665e5", "template_ige8bwh", {
+        name,
+        email,
+        course,
+        category,
+        message
+      })
+      .then(() => {
+        alert("✅ Complaint submitted successfully and sent to campus email.");
+        document.getElementById("complaintForm").reset();
+        document.getElementById("complaintFormContainer").style.display = "none";
+        document.getElementById("mainUI").style.display = "flex";
+      })
+      .catch((err) => {
+        alert("❌ Submission failed. See console for details.");
+        console.error("EmailJS Error:", err);
+      });
+    });
+  </script>
+</body>
+</html>
